@@ -1,0 +1,395 @@
+<html>
+	
+	<html>
+
+	<head>
+		<title>Catalogo Clientes</title>
+		<style>
+		
+		#registro{
+			width:100%;
+			border-collapse:collapse; 
+	
+		}
+		
+		//# thead{
+		
+			background:black;
+			color:white;
+		}
+		
+		#tbInput{
+			
+		
+			border: 1px solid black;
+			background:lightblue;
+		
+		
+		}
+		
+		#parent{
+			width: 100%;
+			
+		}
+		#tomarFoto{
+			text-align:center;
+		}
+		
+		
+		
+		body{
+	           font-family:Tahoma;
+			   margin:15px;
+	           padding:10px;
+			   border:solid 1px; 
+			   background:lightgreen;
+	}
+
+#registrados{
+    width:100%;
+	
+}
+
+#tbDatos{
+text-align:center;
+}
+
+			
+			.borrar1{
+			
+				color:red;
+				background:pink;
+			}
+			
+		</style>
+	
+<body>
+	
+	<table id="parent"><tr><td>
+	
+	<table id="tbInput"  float="left">
+			<tr><th><h3>Datos del Cliente</h3></th></tr>
+			
+		<tr>
+		<th>Cedula: </th>
+		<td><input type="text" id="txtCedula"/></td>
+		</tr>
+			<tr>
+				<th>Nombre: </th>
+				<td><input type="text" id="txtNombre"/></td>	
+			</tr>
+			
+			<tr>
+				<th>Apellido: </th>
+				<td><input type="text" id="txtApellido"/></td>	
+			</tr>
+			
+			<tr>
+				<th>Telefono: </th>
+				<td><input type="text" id="txtTelefono"/></td>	
+			</tr>
+			
+			<tr><td colspan="2" align="center"><button id="btnGuardar" "type="button" onclick="agregar()">Guardar</button></td>
+			</tr>
+			
+			</td>
+	
+		
+		
+		
+		
+		</table>
+		
+		<td>
+		<table float="right" id="tomarFoto">
+			<tr>
+				<td>
+					<video id="video" width="300" height="200"></video>
+	<td><canvas id="canvas"></canvas><br></td>
+	
+					
+				</td>
+			</tr>
+		<tr><td><button onclick="snap()">Capturar</button>
+	<button id="downloadLnk" onclick="guardarImg()">Guardar</button></td></tr>
+		
+		</table>
+		
+		</td></tr>
+		</table>
+	</head>
+	
+	<br>
+	
+	
+	<hr></br>
+	
+	<h3>Clientes Registrados</h3>
+	
+	<table id="registro" border="1px">
+		<thead>
+			<th>Cedula</th>
+			<th>Nombre</th>
+			<th>Apellido</th>
+			<th>Telefono</th>
+			<th>Foto</th>
+			<th>Accion</th>
+		</thead>
+		<tbody id="tbDatos">
+		
+		
+		</tbody>
+	</table>
+	
+	
+	
+	<script>
+
+		alert("solo funciona en Mozilla Firefox");
+	
+	alert("A CONTINUACION AUTORICE LA PAGINA A USAR SU CAMARA");
+		var video =document.getElementById('video');
+		var canvas = document.getElementById('canvas');
+		var context = canvas.getContext('2d');
+		var img = canvas.toDataURL("foto/png");
+	navigator.getUserMedia =navigator.getUserMedia || navigator.webkitGetUserMedia  || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+			
+			
+			if(navigator.getUserMedia){
+			
+			
+			navigator.getUserMedia({video:true}, streamWebCam, throwError);
+			}
+	
+	function streamWebCam(stream){
+	
+		video.src=window.URL.createObjectURL(stream);
+		video.play();
+	}
+	function throwError(e){
+	
+		alert(e.name);
+		
+	}
+	
+	function guardarImg(){
+	
+	
+	}
+	
+	function snap(){
+	
+	canvas.width=video.clientWidth;
+	canvas.height=video.clientHeight;
+	
+	context.drawImage(video,0,0);
+	
+	
+	}
+	
+	function download() {
+	localStorage.setItem("imgCanvas",canvas.toDataURL());
+    var dt = canvas.toDataURL('image/jpeg');
+    this.href = dt;
+	var img=new Image();
+img.onload=function(){
+    context.drawImage(img,0,0);
+}
+img.src=localStorage.getItem("imgCanvas");
+	
+};
+downloadLnk.addEventListener('click', download, false);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+		var clientes = [];	
+		
+	
+	fotos=[];
+	fotos[0]="Prueba";
+	var nuevo=true;
+	var indicex=0;
+	
+		function limpiar(){
+		
+			document.getElementById('txtCedula').value='';
+			document.getElementById('txtNombre').value='';
+			document.getElementById('txtApellido').value='';
+			document.getElementById('txtTelefono').value='';
+		}
+		
+				
+		function agregar(){
+		
+			cliente = [];
+			
+			cliente.push(document.getElementById('txtCedula').value);
+			cliente.push(document.getElementById('txtNombre').value);
+			cliente.push(document.getElementById('txtApellido').value);
+			cliente.push(document.getElementById('txtTelefono').value);
+			
+			
+			todoBien =true;
+			for(x=0;x<cliente.length;x++){
+			
+				if(cliente[x] == ""){
+					todoBien=false;
+				
+				}
+			}
+			if(todoBien){
+					if(nuevo){
+				clientes.push(cliente);	
+				datos = JSON.stringify(clientes);
+				localStorage.setItem('catalogo', datos);
+				alert("Registro Guardado");
+				limpiar();
+				mostrar();
+			}else{
+				clientes[indicex]=cliente;
+				datos = JSON.stringify(clientes);
+			localStorage.setItem('catalogo', datos);
+			alert("Registro Editado");
+			limpiar();
+			mostrar();
+			}
+			}else{
+			
+				alert('Debe llenar todos los campos');
+			}
+			
+		}
+		
+	function borrar(button){
+	
+	tr=button.parentNode.parentNode;
+	if(confirm('Desea eliminar este registro?')){
+	indice=tr.getAttribute('indice');
+	
+	tarr=[];
+	for(x=0;x<clientes.length;x++){
+		if(x!=indice){
+			tarr.push(clientes[x]);
+			
+		}
+	}
+	clientes=tarr;
+	
+	tr.parentNode.removeChild(tr);
+	datos = JSON.stringify(clientes);
+	localStorage.setItem('catalogo', datos);
+	mostrar();
+	}
+	
+	tr.setAttribute('class', '');
+	
+	}
+
+	
+	function editar(button){
+	
+	tr=button.parentNode.parentNode;
+	indice=tr.getAttribute('indice');
+	
+	tarr=[];
+	tarr1=[];
+	tarr2=[];
+	for(x=0;x<clientes.length;x++){
+		if(x==indice){
+			tarr1=clientes[indice];
+			
+			
+			
+			document.getElementById('txtCedula').value=tarr1[0];
+			document.getElementById('txtNombre').value=tarr1[1];
+			document.getElementById('txtApellido').value=tarr1[2];
+			document.getElementById('txtTelefono').value=tarr1[3];
+			
+			
+		}
+	}
+	nuevo=false;
+	indicex=tr.getAttribute('indice');
+	
+	
+	
+	}
+		
+		function mostrar(){
+			destino = document.getElementById('tbDatos');
+			destino.innerHTML="";
+			
+			for(x=0;x<clientes.length; x++){
+			
+				tr=document.createElement('tr');
+				tr.setAttribute('indice', x);
+				tr.setAttribute('indice2', x);
+				
+				cliente=clientes[x];
+				for(y=0; y<cliente.length; y++){
+					dato = cliente[y];
+					td = document.createElement('td');
+					td1 = document.createElement('td');
+					td2 = document.createElement('td');
+					
+					td.innerHTML = dato;
+					
+					
+					td1.innerHTML = '<img src=\'persona.png\'>';
+					td2.innerHTML = '<button onClick=\'editar(this)\'>Editar</button><button onClick=\'borrar(this)\' >X</button>';
+					
+					
+					tr.appendChild(td);
+					
+					
+					
+				}
+				
+				
+				tr.appendChild(td1);
+				
+				tr.appendChild(td2);
+				destino.appendChild(tr);
+				
+			}		
+			
+			
+			
+		}
+		
+	datos=localStorage.getItem('catalogo');
+	if (datos != null){
+	
+		clientes=JSON.parse(datos);
+		mostrar();
+	}
+	
+	</script>
+	
+
+	
+	</body>
+
+	
+
+</html>
+	
+
+
+
+
+
+</html>
